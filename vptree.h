@@ -41,6 +41,8 @@
 #include <limits>
 #include <cmath>
 
+#include <cassert>
+
 
 #ifndef VPTREE_H
 #define VPTREE_H
@@ -93,8 +95,12 @@ double euclidean_distance(const DataPoint &t1, const DataPoint &t2) {
     double* x2 = t2._x;
     double diff;
     for(int d = 0; d < t1._D; d++) {
+        if (std::isnan(x1[d]) || std::isnan(x2[d]))
+            return 0.0;
         diff = (x1[d] - x2[d]);
         dd += diff * diff;
+
+        assert(!std::isnan(sqrt(dd)));
     }
     return sqrt(dd);
 }
@@ -233,6 +239,8 @@ private:
         
         // Compute distance between target and current node
         double dist = distance(_items[node->index], target);
+
+
 
         // If current node within radius tau
         if(dist < _tau) {
